@@ -177,6 +177,37 @@ Ensure that your code handles exceptions gracefully and that your logic is robus
 - **Optimize token usage**—you have a limited budget (~10M tokens for development)
 - **Document your reasoning** for key design decisions
 
+---
+
+# Solution Approach
+
+## Overview
+
+This solution implements an automated AI-powered article rectification pipeline that corrects factual inaccuracies in AI-generated articles while preserving the original writing style and structure.
+
+The system compares the source article (ground truth) with the AI-generated article and uses a Large Language Model to replace only incorrect factual information. The prompt is designed to minimize unnecessary rewrites and preserve the existing wording whenever possible.
+
+## Design Decisions
+
+- Used Groq's `openai/gpt-oss-120b` model for factual comparison and correction.
+- Configured all runtime parameters (`LLM_API_BASE`, `LLM_MODEL_NAME`, `LLM_API_KEY`) through environment variables.
+- Set the model temperature to `0` to ensure deterministic and consistent outputs.
+- Added retry logic (up to three attempts) for transient API failures.
+- Preserved the existing project structure so that the provided evaluation command works without modification.
+
+## Assumptions
+
+- The source article always contains the correct facts.
+- The AI-generated article has the desired writing style and only requires factual corrections.
+- Only factual inaccuracies should be modified; stylistic improvements are intentionally avoided.
+
+## How to Run
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+
 
 ---
 
