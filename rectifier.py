@@ -23,6 +23,18 @@ def get_ai_generated_article(article_id: str):
         article = f.read()
     return article
 
+def get_source_article(article_id: str):
+    """
+    Read the original source article.
+    """
+    mapping = get_article_mapping(article_id)
+    fpath = mapping["source_file"]
+
+    with open(fpath, "r", encoding="utf-8") as f:
+        article = f.read()
+
+    return article
+
 def save_rectified_article(article_id: str, rectified_content: str):
     mapping = get_article_mapping(article_id)
     fpath = mapping['rectified_file']
@@ -45,10 +57,15 @@ def rectify_article(article_id: str):
         str: The rectified article content
     """
     
-    ai_generated_content = get_ai_generated_article(article_id)
     
-    # PLUG YOUR CUSTOM RECTIFIER HERE
-    rectified_content = run(ai_generated_content)
+    # # PLUG YOUR CUSTOM RECTIFIER HERE
+    source_content = get_source_article(article_id)
+    ai_generated_content = get_ai_generated_article(article_id)
+
+    rectified_content = run(
+        source_content,
+        ai_generated_content
+    )
     ###################################
     
     save_rectified_article(article_id, rectified_content)
